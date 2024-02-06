@@ -1,0 +1,9 @@
+[submodule "main-service"]
+	path = main-service
+	url = https://github.com/Traverse2023/main-service
+[submodule "storage-service"]
+	path = storage-service
+	url = https://github.com/Traverse2023/storage-service
+[submodule "traverse-ui"]
+	path = traverse-ui
+	url = https://github.com/Traverse2023/traverse-ui
