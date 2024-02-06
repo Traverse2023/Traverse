@@ -1,0 +1,78 @@
+
+services:
+
+  mongodb:
+    container_name: mongodb
+    image: mongodb/mongodb-community-server
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+  neo4j:
+    container_name: neo4j
+    image: neo4j:5.16-community-bullseye
+    ports:
+      - 7687:7687
+      - 7474:7474
+    environment:
+      NEO4J_AUTH: neo4j/password
+    volumes:
+      - neo4j_data:/data/
+
+  storage-service:
+    container_name: storage-service
+    build: storage-service
+    ports:
+      - 8080:8080
+    environment:
+      MONGO_URL: mongodb://mongodb/mongodb_data
+    depends_on:
+      - mongodb
+
+
+  main-service:
+    container_name: main-service
+    build: main-service
+    ports:
+      - 8000:8000
+    command: npm run watch
+    develop:
+      watch:
+        - action: rebuild
+          path: ./main-service/package.json
+        - action: sync
+          path: ./main-service/src
+          target: /app/src
+
+    environment:
+      NEO4J_PASSWORD: password
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      STORAGE_SERVICE_URL: http://storage-service:8080
+      JWT_WEB_TOKEN: supersecret_dont_share
+    depends_on:
+      - storage-service
+      - neo4j
+
+  front-end:
+    build: traverse-ui
+    ports:
+      - 3000:3000
+    command: npm run dev
+    environment:
+      VITE_APP_BACKEND_URL: http://127.0.0.1:8000/
+      VITE_APP_STORAGE_SERVICE_URL: http://127.0.0.1:8080
+    develop:
+      watch:
+        - action: rebuild
+          path: ./traverse-ui/package.json
+        - action: sync
+          path: ./traverse-ui/src
+          target: /app/src
+    depends_on: main-service
+
+
+volumes:
+  mongodb_data:
+  neo4j_data:
