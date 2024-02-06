@@ -1,5 +1,6 @@
-Clone repo with "--recurse-submodules" flag present
+Clone repo with:
 
-run "docker compose watch" to run all parts of application containerized with hot reloading enabled
+git clone --recursive "repo"
 
+docker compose watch
 enjoi...
