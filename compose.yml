@@ -66,8 +66,8 @@ services:
     ports:
       - 3000:3000
     environment:
-      VITE_APP_BACKEND_URL: http://127.0.0.1:8000/
-      VITE_APP_STORAGE_SERVICE_URL: http://127.0.0.1:8080
+      VITE_APP_BACKEND_URL: http://main-service:8000/
+      VITE_APP_STORAGE_SERVICE_URL: http://storage-service:8080
     develop:
       watch:
         - action: rebuild
