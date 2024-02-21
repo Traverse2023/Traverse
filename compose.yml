@@ -8,6 +8,9 @@ services:
       - 27017:27017
     volumes:
       - mongodb_data:/data/db
+    depends_on:
+      neo4j:
+        condition: service_started
 
   neo4j:
     container_name: neo4j
@@ -22,7 +25,10 @@ services:
 
   storage-service:
     container_name: storage-service
-    build: storage-service
+    build:
+      context: storage-service
+      dockerfile: Dockerfile
+      target: base
     ports:
       - 8080:8080
     command: mvn spring-boot:run
@@ -33,14 +39,17 @@ services:
     develop:
       watch:
         - action: rebuild
-          path: ./storage-service
-        - action: sync
-          path: ./storage-service
-          target: /storage-service
+          path: ./storage-service/pom.xml
+        - action: sync+restart
+          path: ./storage-service/src
+          target: /app/src
 
   main-service:
     container_name: main-service
-    build: main-service
+    build:
+      no_cache: true
+      context: main-service
+      dockerfile: Dockerfile
     ports:
       - 8000:8000
     command: npm run watch
@@ -62,9 +71,12 @@ services:
       - neo4j
 
   front-end:
+    container_name: front-end
     build:
+      no_cache: true
       context: traverse-ui
       dockerfile: Dockerfile
+      target: build
       args:
         VITE_APP_BACKEND_URL: http://127.0.0.1:8000/
         VITE_APP_STORAGE_SERVICE_URL: http://127.0.0.1:8080
@@ -73,7 +85,7 @@ services:
     environment:
       VITE_APP_BACKEND_URL: http://127.0.0.1:8000/
       VITE_APP_STORAGE_SERVICE_URL: http://127.0.0.1:8080
-    command: npm run start
+    command: npm start
     develop:
       watch:
         - action: rebuild
@@ -82,7 +94,7 @@ services:
           path: ./traverse-ui/src
           target: /app/src
     depends_on:
-    - main-service
+      - main-service
 
 
 volumes:
