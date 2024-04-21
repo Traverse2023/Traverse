@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: auth-service
+  neo4j:
+    uri: ${NEO4J_URI:bolt://127.0.0.1:7687}
+    authentication:
+      password: ${NEO4J_PASSWORD:password}
+      username: ${NEO4j_USERNAME:neo4j}
+
+jwt:
+  key: ${JWT_SECRET_KEY:KS8LgP4/sYt6REp8xY7HYaLbHOkyJ1PPB4PFCKjZeI8=}
+
+server:
+  port: 8050
+
+
