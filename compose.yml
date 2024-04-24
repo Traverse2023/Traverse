@@ -100,8 +100,8 @@ services:
       STORAGE_SERVICE_URL: http://storage-service:8080
       JWT_WEB_TOKEN: supersecret_dont_share
     depends_on:
-      - neo4j
-      - storage-service
+      neo4j:
+        condition: service_started
 
   front-end:
     container_name: front-end
