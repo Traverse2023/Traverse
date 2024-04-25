@@ -7,3 +7,9 @@
 [submodule "traverse-ui"]
 	path = traverse-ui
 	url = https://github.com/Traverse2023/traverse-ui
+[submodule "api-gateway"]
+	path = api-gateway
+	url = https://github.com/Traverse2023/api-gateway.git
+[submodule "auth-service"]
+	path = auth-service
+	url = https://github.com/Traverse2023/auth-service.git
