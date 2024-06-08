@@ -24,6 +24,11 @@ Additionally, you may also wish to run the services with auto reload enabled by 
           
 `docker compose watch`
 
+## To update all submodule repositories to the most up to date commits
+
+1. Execute the below command to pull main for all submodules
+
+`git submodule foreach git pull origin main && git submodule foreach git checkout main`
 
 ## Run individual services
 
