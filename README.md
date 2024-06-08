@@ -6,7 +6,7 @@ All AWS resources are run locally using dockerized instance of aws localstack. T
 
 Our graph database is also run using a standard dockerhub community image of Neo4j.
 
-You will need to have 1. [Docker](https://www.docker.com/products/docker-desktop/) installed as well as [Neo4j Desktop](https://neo4j.com/download/) to view database entries. _MAKE SURE YOU HAVE AN UPDATED VERSION OF DOCKER TO HAVE UP TO DATE FUNCTIONALITIES!_
+You will need to have 1. [Docker](https://www.docker.com/products/docker-desktop/) installed as well as [Neo4j Desktop](https://neo4j.com/download/) to view database entries. _MAKE SURE YOU HAVE AN UPDATED VERSION OF DOCKER (> 2.22) TO HAVE UP TO DATE FUNCTIONALITIES!_
 
 
 ## To setup all dockerized services and databases for local deployment:
