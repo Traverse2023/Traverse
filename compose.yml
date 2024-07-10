@@ -35,13 +35,15 @@ services:
     build:
       context: api-gateway
       dockerfile: Dockerfile
-    ports:
-      - 8081:8081
+      target: base
     environment:
       AUTH_SERVICE_URI: http://auth-service:8050
       MAIN_SERVICE_URI: http://main-service:8000
       TRAVERSE_UI_URI: http://front-end:3000
       STORAGE_SERVICE_URI: http://storage-service:8080
+    ports:
+      - 8081:8081
+    command: mvn spring-boot:run
     develop:
       watch:
         - action: rebuild
@@ -57,6 +59,7 @@ services:
     build:
       context: auth-service
       dockerfile: Dockerfile
+      target: base
     ports:
       - 8050:8050
     environment:
@@ -65,6 +68,7 @@ services:
       NEO4J_URI: bolt://neo4j:7687
     depends_on:
       - neo4j
+    command: mvn spring-boot:run
     develop:
       watch:
         - action: rebuild
