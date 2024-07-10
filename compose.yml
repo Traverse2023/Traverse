@@ -29,7 +29,25 @@ services:
     volumes:
       - neo4j_data:/data/
 
+  api-gateway:
+    platform: linux/x86_64
+    container_name: api-gateway
+    build:
+      context: api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    develop:
+      watch:
+        - action: rebuild
+          path: ./api-gateway/pom.xml
+        - action: sync
+          path: ./api-gateway/src
+          target: /app/src
+
+
   auth-service:
+    platform: linux/x86_64
     container_name: auth-service
     build:
       context: auth-service
