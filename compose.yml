@@ -37,6 +37,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8081:8081
+    environment:
+      AUTH_SERVICE_URI: http://auth-service:8050
+      MAIN_SERVICE_URI: http://main-service:8000
+      TRAVERSE_UI_URI: http://front-end:3000
+      STORAGE_SERVICE_URI: http://storage-service:8080
     develop:
       watch:
         - action: rebuild
