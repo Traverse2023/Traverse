@@ -131,6 +131,23 @@ services:
       neo4j:
         condition: service_started
 
+  code-engine:
+    container_name: code-engine
+    build:
+      no_cache: true
+      context: code-engine
+      dockerfile: Dockerfile
+    ports:
+      - 3300:3300
+    command: python3 -m flask run --host=0.0.0.0 --port=3300
+    develop:
+      watch:
+        - action: rebuild
+          path: ./code-engine/requirements.txt
+        - action: sync
+          path: ./code-engine/src
+          target: /app/src
+
   front-end:
     container_name: front-end
     build:
