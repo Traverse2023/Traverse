@@ -3,18 +3,18 @@ services:
 
   localstack:
     container_name: localstack
-    image: localstack/localstack:3.2
+    image: localstack/localstack:3.6
     ports:
       - 4563-4599:4563-4599
       - 8055:8080
     environment:
-      - SERVICES=dynamodb,kms
+      - SERVICES=dynamodb,kms,s3
       - DEFAULT_REGION=us-east-1
       - DEBUG=1
       - PERSISTENCE=1
       - DYNAMODB_SHARE_DB=1
     volumes:
-      - ./storage-service/create-aws-data.sh:/etc/localstack/init/ready.d/init-aws.sh
+      #- ./storage-service/create-aws-data.sh:/etc/localstack/init/ready.d/init-aws.sh
       - localstack_data:/var/lib/localstack
       - /var/run/docker.sock:/var/run/docker.sock
 
@@ -49,7 +49,7 @@ services:
       watch:
         - action: rebuild
           path: ./api-gateway/pom.xml
-        - action: sync
+        - action: sync+restart
           path: ./api-gateway/src
           target: /app/src
 
@@ -73,7 +73,7 @@ services:
       watch:
         - action: rebuild
           path: ./auth-service/pom.xml
-        - action: sync
+        - action: sync+restart
           path: ./auth-service/src
           target: /app/src
 
@@ -102,6 +102,28 @@ services:
           path: ./storage-service/src
           target: /app/src
 
+  front-end:
+    container_name: front-end
+    build:
+      no_cache: true
+      context: traverse-ui
+      dockerfile: Dockerfile
+      target: build
+      args:
+        VITE_APP_BACKEND_URL: http://127.0.0.1:8081
+    ports:
+      - 3000:3000
+    command: npm start
+    develop:
+      watch:
+        - action: rebuild
+          path: ./traverse-ui/package.json
+        - action: sync
+          path: ./traverse-ui/src
+          target: /app/src
+    depends_on:
+      - main-service
+
   main-service:
     container_name: main-service
     build:
@@ -125,36 +147,16 @@ services:
       AUTH_SERVICE_URL: http://auth-service:8050
       STORAGE_SERVICE_URL: http://storage-service:8080
       JWT_WEB_TOKEN: supersecret_dont_share
+      S3_ENDPOINT: s3.localhost.localstack.cloud:4566
+      AWS_REGION: us-east-1
+      PROFILE_PICS_BUCKET: codehive-profile-pics
+      AWS_ACCESS_KEY_ID: DUMMY
+      AWS_SECRET_ACCESS_KEY: DUMMY
     depends_on:
       auth-service:
         condition: service_started
       neo4j:
         condition: service_started
-
-  front-end:
-    container_name: front-end
-    build:
-      no_cache: true
-      context: traverse-ui
-      dockerfile: Dockerfile
-      target: build
-#      args:
-#        VITE_APP_BACKEND_URL: http://127.0.0.1:8081
-    ports:
-      - 3000:3000
-#    environment:
-#      VITE_APP_BACKEND_URL: http://127.0.0.1:8081
-    command: npm start
-    develop:
-      watch:
-        - action: rebuild
-          path: ./traverse-ui/package.json
-        - action: sync
-          path: ./traverse-ui/src
-          target: /app/src
-    depends_on:
-      - main-service
-
 volumes:
   localstack_data:
   neo4j_data:
